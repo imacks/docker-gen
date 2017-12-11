@@ -1,0 +1,124 @@
+#!/bin/sh
+
+# ============================================================
+# This is an automatically generated file that is frequently 
+# overwritten by a program. Do not edit manually.
+#
+# Docker Version {{ .Docker.Version }}
+# ============================================================
+
+{{ $vhostName := .Docker.Name }}
+
+
+# -----------------------
+# VHost platform info
+# -----------------------
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/IsUpdating "true"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/Vendor "Docker"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/Name "{{ $vhostName }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/NumContainers "{{ .Docker.NumContainers }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/NumImages "{{ .Docker.NumImages }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/Version "{{ .Docker.Version }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/ApiVersion "{{ .Docker.ApiVersion }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/OperatingSystem "{{ .Docker.OperatingSystem }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/Architecture "{{ .Docker.Architecture }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/ControllerContainerID "{{ .Docker.CurrentContainerID }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Platform/IsUpdating "false"
+
+# Begin update containers info
+etcdctl rm -r /VirtualContainerHosts/{{ $vhostName }}/Containers
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/IsUpdating "true"
+
+{{range $key, $value := .}}
+
+# -----------------------
+# Container {{ $value.ID }}
+# -----------------------
+
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Gateway "{{ $value.Gateway }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Name "{{ $value.Name }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Hostname "{{ $value.Hostname }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/IP "{{ $value.IP }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/IP6LinkLocal "{{ $value.IP6LinkLocal }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/IP6Global "{{ $value.IP6Global }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/State/Running "{{ $value.State.Running }}"
+
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Image/Registry "{{ $value.Image.Registry }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Image/Repository "{{ $value.Image.Repository }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Image/Tag "{{ $value.Image.Tag }}"
+
+if [ "x{{ $value.Node.ID }}" != "x" ]; then
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/ID "{{ $value.Node.ID }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Name "{{ $value.Node.Name }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/IP "{{ $value.Node.Address.IP }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/IP6LinkLocal "{{ $value.Node.Address.IP6LinkLocal }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/IP6Global "{{ $value.Node.Address.IP6Global }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/Port "{{ $value.Node.Address.Port }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/HostPort "{{ $value.Node.Address.HostPort }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/Proto "{{ $value.Node.Address.Proto }}"
+	etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Node/Address/HostIP "{{ $value.Node.Address.HostIP }}"
+fi
+
+{{ $addressLength := len $value.Addresses }}
+{{ if gt $addressLength 0 }}
+{{ range $i, $addresses := $value.Addresses }}
+{{ with $address := index $value.Addresses $i }}
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/IP "{{ $address.IP }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/IP6LinkLocal "{{ $address.IP6LinkLocal }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/IP6Global "{{ $address.IP6Global }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/Port "{{ $address.Port }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/HostPort "{{ $address.HostPort }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/Proto "{{ $address.Proto }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Addresses/{{ $i }}/HostIP "{{ $address.HostIP }}"
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ $networksLength := len $value.Networks }}
+{{ if gt $networksLength 0 }}
+{{ range $i, $networks := $value.Networks }}
+{{ with $network := index $value.Networks $i }}
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/IP "{{ $network.IP }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/Name "{{ $network.Name }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/Gateway "{{ $network.Gateway }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/EndpointID "{{ $network.EndpointID }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/IPv6Gateway "{{ $network.IPv6Gateway }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/GlobalIPv6Address "{{ $network.GlobalIPv6Address }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/MacAddress "{{ $network.MacAddress }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/GlobalIPv6PrefixLen "{{ $network.GlobalIPv6PrefixLen }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Networks/{{ $i }}/IPPrefixLen "{{ $network.IPPrefixLen }}"
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ $mountsLength := len $value.Mounts }}
+{{ if gt $mountsLength 0 }}
+{{ range $i, $mounts := $value.Mounts }}
+{{ with $mount := index $value.Mounts $i }}
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Mounts/{{ $i }}/Name "{{ $mount.Name }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Mounts/{{ $i }}/Source "{{ $mount.Source }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Mounts/{{ $i }}/Destination "{{ $mount.Destination }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Mounts/{{ $i }}/Driver "{{ $mount.Driver }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Mounts/{{ $i }}/Mode "{{ $mount.Mode }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Mounts/{{ $i }}/ReadWrite "{{ $mount.RW }}"
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ $volumesLength := len $value.Volumes }}
+{{ if gt $volumesLength 0 }}
+{{ range $i, $volumes := $value.Volumes }}
+{{ with $volume := index $value.Volumes $i }}
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Volumes/{{ $i }}/Path "{{ $volume.Path }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Volumes/{{ $i }}/HostPath "{{ $volume.HostPath }}"
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/{{ $value.ID }}/Volumes/{{ $i }}/ReadWrite "{{ $volume.ReadWrite }}"
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{end}}
+
+# -----------------------
+# End
+# -----------------------
+etcdctl set /VirtualContainerHosts/{{ $vhostName }}/Containers/IsUpdating "false"
